@@ -1,0 +1,33 @@
+body {
+    background: #01B0EF;
+    margin: 20px;
+    font-family: "Segoe UI";
+}
+
+input {
+    font-size: 20pt;
+}
+
+h1 {
+    color: #E8FEFF;
+    font-size: 22pt;
+}
+
+table {
+    border-spacing: 0;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    width: 100%;
+}
+
+table th, table td {
+    padding: 5px 10px;
+    text-align: center;
+    background: #E8FEFF;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+}
+
+.error {
+    color: red;
+}
