@@ -55,5 +55,8 @@ tasks.register("distr", Copy::class) {
     from(configurations.runtimeClasspath)
     from(tasks.jar)
     from("config")
+    from(".") {
+        include("web/**")
+    }
     into("$rootDir/distr/arshin")
 }

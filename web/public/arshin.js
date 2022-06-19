@@ -40,7 +40,7 @@ async function search() {
     result.innerHTML = `<h2>Поиск по номеру в госреестре ${escapeHtml(num)}... <img src="/loading.gif" width="24px" alt="Пожалуйста подождите..."></h2>`;
     let html = '';
     try {
-        const response = await fetch('/arshinHtml?' + new URLSearchParams({num}));
+        const response = await fetch('/arshin/html?' + new URLSearchParams({num}));
         if (response.status === 200) {
             html = await response.text();
         }

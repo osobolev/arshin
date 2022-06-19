@@ -1,11 +1,12 @@
 package arshin;
 
 import arshin.dto.NumInfo;
-import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.FileTemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
+import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinFreemarker;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,13 +62,11 @@ public final class WebApp {
         }
     }
 
-    private static boolean isDebug(Properties props) {
-        Properties[] toTry = {System.getProperties(), props};
-        for (Properties p : toTry) {
-            if (Boolean.parseBoolean(p.getProperty("debug", "false")))
-                return true;
-        }
-        return false;
+    private static String ip(Context ctx) {
+        String realIP = ctx.header("X-Real-IP");
+        if (realIP != null)
+            return realIP;
+        return ctx.ip();
     }
 
     public static void main(String[] args) {
@@ -84,7 +84,7 @@ public final class WebApp {
             Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_31);
             ftlConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
             ftlConfig.setDefaultEncoding("UTF-8");
-            ftlConfig.setTemplateLoader(new ClassTemplateLoader(WebApp.class, "/"));
+            ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
             JavalinFreemarker.configure(ftlConfig);
 
             HttpClientBuilder builder = HttpClients.custom();
@@ -95,25 +95,20 @@ public final class WebApp {
 
             Javalin app = Javalin.create(cfg -> {
                 cfg.showJavalinBanner = false;
-                boolean debug = isDebug(props);
-                if (debug) {
-                    cfg.addStaticFiles("resources/public", Location.EXTERNAL);
-                } else {
-                    cfg.addStaticFiles("/public", Location.CLASSPATH);
-                }
+                cfg.addStaticFiles("web/public", Location.EXTERNAL);
             });
-            app.get("/arshinJson", ctx -> {
+            app.get("/arshin/json", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
-                LOGGER.info("Request /arshinJson for {} from {}", num, ctx.ip());
+                LOGGER.info("Request /arshin/json for {} from {}", num, ip(ctx));
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
                 NumInfo info = Download.getNumInfo(client, num, prc -> {});
                 ctx.json(info);
             });
-            app.get("/arshinHtml", ctx -> {
+            app.get("/arshin/html", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
-                LOGGER.info("Request /arshinHtml for {} from {}", num, ctx.ip());
+                LOGGER.info("Request /arshin/html for {} from {}", num, ip(ctx));
                 Map<String, Object> params = new HashMap<>();
                 if (num != null) {
                     params.put("num", num);
@@ -130,7 +125,7 @@ public final class WebApp {
             });
 
             int port = Integer.parseInt(props.getProperty("port", "8080"));
-            app.start(port);
+            app.start("localhost", port);
         } catch (Exception ex) {
             LOGGER.error("Startup error", ex);
         }
