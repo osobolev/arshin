@@ -104,6 +104,7 @@ public final class WebApp {
             });
             app.get("/arshinJson", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
+                LOGGER.info("Request /arshinJson for {} from {}", num, ctx.ip());
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
@@ -112,6 +113,7 @@ public final class WebApp {
             });
             app.get("/arshinHtml", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
+                LOGGER.info("Request /arshinHtml for {} from {}", num, ctx.ip());
                 Map<String, Object> params = new HashMap<>();
                 if (num != null) {
                     params.put("num", num);
