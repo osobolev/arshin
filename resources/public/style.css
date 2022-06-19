@@ -1,16 +1,83 @@
 body {
-    background: #01B0EF;
-    margin: 20px;
-    font-family: "Segoe UI";
+    margin: 0;
+    font-family: sans-serif;
+}
+
+#main {
+    background: #d6e7f1;
+    padding: 5px 30px 40px 30px;
+    color: #264e8f;
+}
+
+#result {
+    background: white;
+    padding: 5px 30px 75px 30px;
+    color: #264e8f;
+}
+
+#footer {
+    position: fixed;
+    background: #264e8f;
+    color: white;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px 30px 10px 30px;
+    text-align: center;
+}
+
+#footer a {
+    color: white;
+    font-size: 20pt;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#help {
+    background: #d6e7f1;
+    padding: 5px 30px 40px 30px;
+    color: #264e8f;
 }
 
 input {
     font-size: 20pt;
 }
 
+input[type=text] {
+    outline: none;
+    padding: 10px;
+    border: 0.0625rem solid white;
+    border-radius: 0.25rem;
+}
+
+input[type=button] {
+    background: orange;
+    padding: 10px 20px;
+    border: 0.0625rem solid transparent;
+    border-radius: 0.25rem;
+    cursor: pointer;
+}
+
+input[type=text]:focus, input[type=text]:hover {
+    border: 0.0625rem solid rgba(70,166,255,.62);
+    box-shadow: 0 0 0.3125rem rgb(70 166 255 / 62%);
+}
+
 h1 {
-    color: #E8FEFF;
     font-size: 22pt;
+}
+
+h2 {
+    font-size: 16pt;
+    margin-top: 30px;
+    margin-bottom: 5px;
+}
+
+h3 {
+    color: gray;
+    font-size: 10pt;
+    margin-top: 0;
+    margin-bottom: 5px;
 }
 
 table {
@@ -26,6 +93,10 @@ table th, table td {
     background: #E8FEFF;
     border-bottom: 1px solid black;
     border-right: 1px solid black;
+}
+
+.emptyInput {
+    background: #f68a8a;
 }
 
 .error {

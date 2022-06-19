@@ -1,21 +1,6 @@
 <#-- @ftlvariable name="num" type="java.lang.String" -->
 <#-- @ftlvariable name="error" type="boolean" -->
 <#-- @ftlvariable name="info" type="arshin.dto.NumInfo" -->
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Публичный портал проверки средств измерений (СИ) в ФГИС «Аршин»</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-<h1>Публичный портал проверки средств измерений (СИ) в ФГИС «Аршин»</h1>
-<form method="get" action="/">
-    <input type="text" size="40" name="num" placeholder="Введите регистрационный номер СИ" value="${num!}">
-    <input type="submit" value="Найти">
-</form>
-
 <#if error??>
     <h1 class="error">Ошибка при обращении к ФГИС «Аршин»</h1>
 </#if>
@@ -88,6 +73,3 @@
 
     </#if>
 </#if>
-
-</body>
-</html>

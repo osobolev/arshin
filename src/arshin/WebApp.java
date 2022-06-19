@@ -60,6 +60,15 @@ public final class WebApp {
         }
     }
 
+    private static boolean isDebug(Properties props) {
+        Properties[] toTry = {System.getProperties(), props};
+        for (Properties p : toTry) {
+            if (Boolean.parseBoolean(p.getProperty("debug", "false")))
+                return true;
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         try {
             Path propFile = Paths.get("arshin.properties");
@@ -84,14 +93,14 @@ public final class WebApp {
             CloseableHttpClient client = builder.setConnectionManager(cman).build();
 
             Javalin app = Javalin.create(cfg -> {
-                boolean debug = Boolean.parseBoolean(props.getProperty("debug", "false"));
+                boolean debug = isDebug(props);
                 if (debug) {
                     cfg.addStaticFiles("resources/public", Location.EXTERNAL);
                 } else {
                     cfg.addStaticFiles("/public", Location.CLASSPATH);
                 }
             });
-            app.get("/arshinService", ctx -> {
+            app.get("/arshinJson", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
                 if (num == null) {
                     throw new BadRequestResponse();
@@ -99,12 +108,13 @@ public final class WebApp {
                 NumInfo info = Download.getNumInfo(client, num, prc -> {});
                 ctx.json(info);
             });
-            app.get("/", ctx -> {
-                Map<String, Object> params = new HashMap<>();
+            app.get("/arshinHtml", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
+                Map<String, Object> params = new HashMap<>();
                 if (num != null) {
                     params.put("num", num);
                     try {
+//                        Thread.sleep(5000);
                         NumInfo info = Download.getNumInfo(client, num, prc -> {});
                         params.put("info", info);
                     } catch (Exception ex) {

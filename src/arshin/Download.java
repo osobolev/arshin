@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.DoubleConsumer;
 
@@ -28,7 +29,8 @@ final class Download {
             return def;
         try {
             ContentType parsed = ContentType.parse(contentType);
-            return parsed.getCharset();
+            Charset charset = parsed.getCharset();
+            return charset == null ? def : charset;
         } catch (Exception ex) {
             return def;
         }
@@ -42,14 +44,14 @@ final class Download {
     }
 
     static List<ItemReg> listRegItems(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
-        List<ItemReg> list = new ArrayList<>();
         if (client == null) {
-            list.add(new ItemReg(
+            ItemReg testItem = new ItemReg(
                 "Test name", "Test type", "Test manufacturer",
                 "http://localhost:8080/test"
-            ));
-            return list;
+            );
+            return Collections.singletonList(testItem);
         }
+        List<ItemReg> list = new ArrayList<>();
         int pageNumber = 1;
         int pageSize = 20;
         while (true) {
@@ -77,14 +79,14 @@ final class Download {
     }
 
     static List<ItemVerify> listVerifyItems(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
-        List<ItemVerify> list = new ArrayList<>();
         if (client == null) {
-            list.add(new ItemVerify(
+            ItemVerify testItem = new ItemVerify(
                 "Test org", "Test type name", "Test type", "Test modification", "Test num", "Test verify date", "Test valid to", "Test doc num", "Test acceptable",
                 "http://localhost:8080/test"
-            ));
-            return list;
+            );
+            return Collections.nCopies(2, testItem);
         }
+        List<ItemVerify> list = new ArrayList<>();
         int start = 0;
         int rows = 20;
         while (true) {
