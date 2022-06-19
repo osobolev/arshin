@@ -70,6 +70,7 @@ public final class WebApp {
     }
 
     public static void main(String[] args) {
+        LOGGER.info("================= STARTING ARSHIN SERVER =================");
         try {
             Path propFile = Paths.get("arshin.properties");
             Properties props = new Properties();
@@ -93,6 +94,7 @@ public final class WebApp {
             CloseableHttpClient client = builder.setConnectionManager(cman).build();
 
             Javalin app = Javalin.create(cfg -> {
+                cfg.showJavalinBanner = false;
                 boolean debug = isDebug(props);
                 if (debug) {
                     cfg.addStaticFiles("resources/public", Location.EXTERNAL);

@@ -5,3 +5,4 @@ build/
 /distr
 /examples
 /test
+*.log

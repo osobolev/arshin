@@ -39,7 +39,7 @@ dependencies {
     implementation("io.javalin:javalin:4.6.1")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
     implementation("org.freemarker:freemarker:2.3.31")
-    runtimeOnly("org.slf4j:slf4j-simple:1.7.36")
+    runtimeOnly("ch.qos.logback:logback-classic:1.2.11")
 }
 
 tasks.jar {
