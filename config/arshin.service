@@ -1,0 +1,11 @@
+[Unit]
+Description=Arshin server
+
+[Service]
+User=arshin
+Group=arshin
+WorkingDirectory=/home/arshin/arshin
+ExecStart=/usr/bin/java -jar arshin-1.0.jar
+
+[Install]
+WantedBy=multi-user.target
