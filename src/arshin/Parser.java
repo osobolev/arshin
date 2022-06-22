@@ -28,7 +28,7 @@ final class Parser {
         } else if (value instanceof JSONArray) {
             JSONArray array = (JSONArray) value;
             return array.toList().stream().map(Parser::toString).collect(Collectors.joining(", "));
-        } else if (JSONObject.NULL.equals(value)) {
+        } else if (value == null || JSONObject.NULL.equals(value)) {
             return "";
         } else {
             return value.toString();
@@ -65,7 +65,7 @@ final class Parser {
             for (Object anyProperty : properties) {
                 JSONObject property = (JSONObject) anyProperty;
                 String propName = property.getString("name");
-                Object propValue = property.get("value");
+                Object propValue = property.opt("value");
                 if ("foei:NameSI".equals(propName)) {
                     name = toString(propValue);
                 } else if ("foei:DesignationSI".equals(propName)) {
@@ -110,7 +110,8 @@ final class Parser {
         }
     }
 
-    private static String unnull(String str) {
+    private static String unnull(JSONObject obj, String field) {
+        String str = obj.optString(field);
         return str == null ? "" : str;
     }
 
@@ -131,16 +132,16 @@ final class Parser {
         JSONArray docs = response.getJSONArray("docs");
         for (Object anyItem : docs) {
             JSONObject item = (JSONObject) anyItem;
-            String organization = unnull(item.getString("org_title"));
-            String typeName = unnull(item.getString("mi.mititle"));
-            String type = unnull(item.getString("mi.mitype"));
-            String modification = unnull(item.getString("mi.modification"));
-            String factoryNum = unnull(item.getString("mi.number"));
-            String verifyDate = formatDate(item.getString("verification_date"));
-            String validTo = formatDate(item.getString("valid_date"));
-            String docNum = unnull(item.getString("result_docnum"));
+            String organization = unnull(item, "org_title");
+            String typeName = unnull(item, "mi.mititle");
+            String type = unnull(item, "mi.mitype");
+            String modification = unnull(item, "mi.modification");
+            String factoryNum = unnull(item, "mi.number");
+            String verifyDate = formatDate(item.optString("verification_date"));
+            String validTo = formatDate(item.optString("valid_date"));
+            String docNum = unnull(item, "result_docnum");
             String acceptable = item.getBoolean("applicability") ? "ГОДЕН" : "НЕ ГОДЕН";
-            String vriId = unnull(item.getString("vri_id"));
+            String vriId = unnull(item, "vri_id");
             list.add(new ItemVerify(
                 organization, typeName, type, modification, factoryNum, verifyDate, validTo, docNum, acceptable,
                 "https://fgis.gost.ru/fundmetrology/cm/results/" + vriId
