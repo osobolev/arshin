@@ -37,7 +37,7 @@
     <#if info.verifyItems?has_content>
 
         <h2>Сведения о результатах поверки средств измерений</h2>
-        <h3>Всего результатов найдено: ${info.verifyItems?size}</h3>
+        <h3>Всего результатов найдено: ${info.verifyCount}</h3>
         <table>
             <tr>
                 <th>Организация-поверитель</th>
@@ -65,6 +65,20 @@
                     <td><a href="${item.link}" target="_blank">Просмотреть в ФГИС «Аршин»</a></td>
                 </tr>
             </#list>
+            <#if info.extraVerifyItems>
+                <tr>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                    <td>...</td>
+                </tr>
+            </#if>
         </table>
 
     <#else>

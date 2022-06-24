@@ -67,28 +67,39 @@ final class Download {
             try (CloseableHttpResponse response = client.execute(get)) {
                 JSONObject value = parse(response);
                 Parser.RegPage page = Parser.parseReg(value, num, list);
-                if (page.portion <= 0 || list.size() >= page.totalCount) {
-                    progress.accept(1.0);
+                if (page.portion <= 0 || list.size() >= page.totalCount)
                     break;
-                }
                 progress.accept((double) list.size() / page.totalCount);
                 pageNumber++;
             }
         }
+        progress.accept(1.0);
         return list;
     }
 
-    static List<ItemVerify> listVerifyItems(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
+    static final class VerifyItems {
+
+        final List<ItemVerify> items;
+        final boolean extraItems;
+
+        VerifyItems(List<ItemVerify> items, boolean extraItems) {
+            this.items = items;
+            this.extraItems = extraItems;
+        }
+    }
+
+    static VerifyItems listVerifyItems(CloseableHttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemVerify testItem = new ItemVerify(
                 "Test org", "Test type name", "Test type", "Test modification", "Test num", "Test verify date", "Test valid to", "Test doc num", "Test acceptable",
                 "http://localhost:8080/test"
             );
-            return Collections.nCopies(2, testItem);
+            return new VerifyItems(Collections.nCopies(2, testItem), false);
         }
         List<ItemVerify> list = new ArrayList<>();
         int start = 0;
         int rows = 20;
+        boolean extraItems = false;
         while (true) {
             URIBuilder buf = new URIBuilder("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
             buf.addParameter("fq", "mi.mitnumber:" + num);
@@ -100,22 +111,26 @@ final class Download {
             HttpGet get = new HttpGet(buf.build());
             try (CloseableHttpResponse response = client.execute(get)) {
                 JSONObject value = parse(response);
-                Parser.VerifyPage page = Parser.parseVerify(value, list);
-                int downloaded = page.start + page.portion;
-                if (page.portion <= 0 || downloaded >= page.numFound) {
-                    progress.accept(1.0);
+                Parser.VerifyPage page = Parser.parseVerify(value, list, limit);
+                if (page == null) {
+                    extraItems = true;
                     break;
                 }
+                int downloaded = page.start + page.portion;
+                if (page.portion <= 0 || downloaded >= page.numFound)
+                    break;
                 start = downloaded;
-                progress.accept((double) downloaded / page.numFound);
+                int progressMax = limit > 0 ? Math.min(page.numFound, limit) : page.numFound;
+                progress.accept((double) downloaded / progressMax);
             }
         }
-        return list;
+        progress.accept(1.0);
+        return new VerifyItems(list, extraItems);
     }
 
     static NumInfo getNumInfo(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
         List<ItemReg> regItems = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
-        List<ItemVerify> verifyItems = listVerifyItems(client, num, prc -> progress.accept(0.5 + prc * 0.5));
-        return new NumInfo(regItems, verifyItems);
+        VerifyItems verifyItems = listVerifyItems(client, num, 100, prc -> progress.accept(0.5 + prc * 0.5));
+        return new NumInfo(regItems, verifyItems.items, verifyItems.extraItems);
     }
 }

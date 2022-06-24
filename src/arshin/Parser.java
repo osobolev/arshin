@@ -115,7 +115,7 @@ final class Parser {
         return str == null ? "" : str;
     }
 
-    static VerifyPage parseVerify(JSONObject root, List<ItemVerify> list) throws IOException {
+    static VerifyPage parseVerify(JSONObject root, List<ItemVerify> list, int limit) throws IOException {
         JSONObject header = root.getJSONObject("responseHeader");
         int status = header.getInt("status");
         if (status != 0) {
@@ -131,6 +131,8 @@ final class Parser {
         int start = response.getInt("start");
         JSONArray docs = response.getJSONArray("docs");
         for (Object anyItem : docs) {
+            if (limit > 0 && list.size() >= limit)
+                return null;
             JSONObject item = (JSONObject) anyItem;
             String organization = unnull(item, "org_title");
             String typeName = unnull(item, "mi.mititle");
