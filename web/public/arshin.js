@@ -55,3 +55,10 @@ function resetErrors() {
     const numInput = document.getElementById('num');
     numInput.classList.remove('emptyInput');
 }
+
+function keyDown(e) {
+    if (e.keyCode === 13) {
+        e.preventDefault();
+        search();
+    }
+}
