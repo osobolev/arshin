@@ -109,18 +109,14 @@ public final class WebApp {
             app.get("/arshin/html", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
                 LOGGER.info("Request /arshin/html for {} from {}", num, ip(ctx));
-                Map<String, Object> params = new HashMap<>();
-                if (num != null) {
-                    params.put("num", num);
-                    try {
-//                        Thread.sleep(5000);
-                        NumInfo info = Download.getNumInfo(client, num, prc -> {});
-                        params.put("info", info);
-                    } catch (Exception ex) {
-                        LOGGER.error("Backend error", ex);
-                        params.put("error", true);
-                    }
+                if (num == null) {
+                    throw new BadRequestResponse();
                 }
+                Map<String, Object> params = new HashMap<>();
+                params.put("num", num);
+//                Thread.sleep(5000);
+                NumInfo info = Download.getNumInfo(client, num, prc -> {});
+                params.put("info", info);
                 ctx.render("result.ftl", params);
             });
 

@@ -38,10 +38,10 @@ async function search() {
     numInput.disabled = true;
     btn.disabled = true;
     result.innerHTML = `<h2>Поиск по номеру в госреестре ${escapeHtml(num)}... <img src="/loading.gif" width="24px" alt="Пожалуйста подождите..."></h2>`;
-    let html = '';
+    let html = '<h1 class="error">Ошибка при обращении к ФГИС «Аршин»</h1>';
     try {
         const response = await fetch('/arshin/html?' + new URLSearchParams({num}));
-        if (response.status === 200) {
+        if (response.ok) {
             html = await response.text();
         }
     } finally {
