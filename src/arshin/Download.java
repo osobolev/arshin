@@ -6,8 +6,10 @@ import arshin.dto.NumInfo;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.net.URIBuilder;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -40,7 +42,19 @@ final class Download {
         HttpEntity entity = response.getEntity();
         Charset encoding = getEncoding(entity, StandardCharsets.UTF_8);
         JSONTokener parser = new JSONTokener(new InputStreamReader(entity.getContent(), encoding));
-        return (JSONObject) parser.nextValue();
+        Object value = parser.nextValue();
+        if (value instanceof JSONObject) {
+            return (JSONObject) value;
+        } else {
+            throw new IOException("Unexpected response: " + value);
+        }
+    }
+
+    private static CloseableHttpResponse execute(CloseableHttpClient client, ClassicHttpRequest request, String referer) throws IOException {
+        request.setHeader(HttpHeaders.ACCEPT, "*/*");
+        request.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "accept-language: en-US,en;q=0.9,ru");
+        request.setHeader(HttpHeaders.REFERER, referer);
+        return client.execute(request);
     }
 
     static List<ItemReg> listRegItems(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
@@ -64,7 +78,7 @@ final class Download {
 //                buf.addParameter("filterBy", "foei:NameSI");
 //                buf.addParameter("filterValues", "Энергосбыт");
             HttpGet get = new HttpGet(buf.build());
-            try (CloseableHttpResponse response = client.execute(get)) {
+            try (CloseableHttpResponse response = execute(client, get, "https://fgis.gost.ru/fundmetrology/registry/4")) {
                 JSONObject value = parse(response);
                 Parser.RegPage page = Parser.parseReg(value, num, list);
                 if (page.portion <= 0 || list.size() >= page.totalCount)
@@ -109,7 +123,7 @@ final class Download {
             buf.addParameter("start", String.valueOf(start));
             buf.addParameter("rows", String.valueOf(rows));
             HttpGet get = new HttpGet(buf.build());
-            try (CloseableHttpResponse response = client.execute(get)) {
+            try (CloseableHttpResponse response = execute(client, get, "https://fgis.gost.ru/fundmetrology/cm/results/")) {
                 JSONObject value = parse(response);
                 Parser.VerifyPage page = Parser.parseVerify(value, list, limit);
                 if (page == null) {
