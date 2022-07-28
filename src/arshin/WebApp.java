@@ -12,7 +12,6 @@ import io.javalin.plugin.rendering.JavalinRenderer;
 import io.javalin.plugin.rendering.template.JavalinFreemarker;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
-import org.apache.hc.client5.http.impl.DefaultConnectionKeepAliveStrategy;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
@@ -24,13 +23,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.net.URISyntaxException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 public final class WebApp {
 
@@ -45,13 +46,13 @@ public final class WebApp {
         return trimmed;
     }
 
-    private static void setupProxy(Properties props, HttpClientBuilder builder) throws URISyntaxException {
+    private static void setupProxy(Properties props, HttpClientBuilder builder) {
         String host = props.getProperty("proxy.host");
         String port = props.getProperty("proxy.port");
         if (host == null || port == null)
             return;
 
-        HttpHost proxy = HttpHost.create(host + ":" + port);
+        HttpHost proxy = HttpHost.create(URI.create(host + ":" + port));
         builder.setProxy(proxy);
 
         String user = props.getProperty("proxy.user");
@@ -88,12 +89,14 @@ public final class WebApp {
             ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
             JavalinFreemarker.configure(ftlConfig);
 
-            HttpClientBuilder builder = HttpClients.custom();
-            builder.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
-            setupProxy(props, builder);
-            PoolingHttpClientConnectionManager cman = new PoolingHttpClientConnectionManager();
-            cman.setMaxTotal(50);
-            CloseableHttpClient client = builder.setConnectionManager(cman).build();
+            Supplier<CloseableHttpClient> client = new ExpiredSupplier<>(6, TimeUnit.HOURS, () -> {
+                HttpClientBuilder builder = HttpClients.custom();
+                builder.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
+                setupProxy(props, builder);
+                PoolingHttpClientConnectionManager cman = new PoolingHttpClientConnectionManager();
+                cman.setMaxTotal(50);
+                return builder.setConnectionManager(cman).build();
+            });
 
             Javalin app = Javalin.create(cfg -> {
                 cfg.showJavalinBanner = false;
@@ -105,7 +108,7 @@ public final class WebApp {
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
-                NumInfo info = Download.getNumInfo(client, num, prc -> {});
+                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 ctx.json(info);
             });
             app.get("/arshin/html", ctx -> {
@@ -117,7 +120,7 @@ public final class WebApp {
                 Map<String, Object> params = new HashMap<>();
                 params.put("num", num);
 //                Thread.sleep(5000);
-                NumInfo info = Download.getNumInfo(client, num, prc -> {});
+                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 params.put("info", info);
                 ctx.render("result.ftl", params);
             });
