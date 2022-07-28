@@ -6,13 +6,13 @@ function getUrlNum() {
 
 function showNum() {
     document.getElementById('num').value = getUrlNum();
-    document.getElementById('result').replaceChildren();
 }
 
 function init() {
     showNum();
     window.addEventListener('popstate', event => {
         showNum();
+        document.getElementById('result').replaceChildren();
     });
 }
 
