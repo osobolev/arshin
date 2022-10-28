@@ -144,7 +144,7 @@ final class Download {
 
     static NumInfo getNumInfo(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
         List<ItemReg> regItems = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
-        VerifyItems verifyItems = listVerifyItems(client, num, 100, prc -> progress.accept(0.5 + prc * 0.5));
+        VerifyItems verifyItems = listVerifyItems(client, num, 200, prc -> progress.accept(0.5 + prc * 0.5));
         return new NumInfo(regItems, verifyItems.items, verifyItems.extraItems);
     }
 }
