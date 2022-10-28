@@ -30,15 +30,15 @@ sourceSets {
 tasks {
     withType(JavaCompile::class) {
         options.encoding = "UTF-8"
-        options.release.set(8)
+        options.release.set(11)
     }
 }
 
 dependencies {
     implementation("org.json:json:20220924")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.1.3")
-    implementation("io.javalin:javalin:4.6.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.3")
+    implementation("io.javalin:javalin:5.1.2")
+    implementation("io.javalin:javalin-rendering:5.1.2")
     implementation("org.freemarker:freemarker:2.3.31")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.4")
 }
@@ -49,6 +49,12 @@ tasks.jar {
             "Class-Path" to configurations.runtimeClasspath.map { conf -> conf.files.map { f -> f.name }.sorted().joinToString(" ") },
             "Main-Class" to "arshin.WebApp"
         )
+    }
+}
+
+tasks.named("clean").configure {
+    doLast {
+        project.delete("$rootDir/distr")
     }
 }
 

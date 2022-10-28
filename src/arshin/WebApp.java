@@ -8,8 +8,7 @@ import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
-import io.javalin.plugin.rendering.JavalinRenderer;
-import io.javalin.plugin.rendering.template.JavalinFreemarker;
+import io.javalin.rendering.template.JavalinFreemarker;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
@@ -82,12 +81,11 @@ public final class WebApp {
                 }
             }
 
-            JavalinRenderer.register(JavalinFreemarker.INSTANCE);
             Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_31);
             ftlConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
             ftlConfig.setDefaultEncoding("UTF-8");
             ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
-            JavalinFreemarker.configure(ftlConfig);
+            JavalinFreemarker.init(ftlConfig);
 
             Supplier<CloseableHttpClient> client = new ExpiredSupplier<>(6, TimeUnit.HOURS, () -> {
                 HttpClientBuilder builder = HttpClients.custom();
@@ -100,7 +98,7 @@ public final class WebApp {
 
             Javalin app = Javalin.create(cfg -> {
                 cfg.showJavalinBanner = false;
-                cfg.addStaticFiles("web/public", Location.EXTERNAL);
+                cfg.staticFiles.add("web/public", Location.EXTERNAL);
             });
             app.get("/arshin/json", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
