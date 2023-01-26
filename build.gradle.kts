@@ -1,6 +1,6 @@
 plugins {
     `java`
-    id("com.github.ben-manes.versions") version "0.43.0"
+    id("com.github.ben-manes.versions") version "0.44.0"
 }
 
 group = "io.github.osobolev"
@@ -36,11 +36,11 @@ tasks {
 
 dependencies {
     implementation("org.json:json:20220924")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.1.3")
-    implementation("io.javalin:javalin:5.1.2")
-    implementation("io.javalin:javalin-rendering:5.1.2")
-    implementation("org.freemarker:freemarker:2.3.31")
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.4")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
+    implementation("io.javalin:javalin:5.3.2")
+    implementation("io.javalin:javalin-rendering:5.3.2")
+    implementation("org.freemarker:freemarker:2.3.32")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
 }
 
 tasks.jar {

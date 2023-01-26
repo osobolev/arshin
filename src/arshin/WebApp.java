@@ -81,12 +81,6 @@ public final class WebApp {
                 }
             }
 
-            Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_31);
-            ftlConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
-            ftlConfig.setDefaultEncoding("UTF-8");
-            ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
-            JavalinFreemarker.init(ftlConfig);
-
             Supplier<CloseableHttpClient> client = new ExpiredSupplier<>(6, TimeUnit.HOURS, () -> {
                 HttpClientBuilder builder = HttpClients.custom();
                 builder.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36");
@@ -96,9 +90,15 @@ public final class WebApp {
                 return builder.setConnectionManager(cman).build();
             });
 
+            Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_32);
+            ftlConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
+            ftlConfig.setDefaultEncoding("UTF-8");
+            ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
+
             Javalin app = Javalin.create(cfg -> {
                 cfg.showJavalinBanner = false;
                 cfg.staticFiles.add("web/public", Location.EXTERNAL);
+                cfg.fileRenderer(new JavalinFreemarker(ftlConfig));
             });
             app.get("/arshin/json", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
@@ -117,7 +117,6 @@ public final class WebApp {
                 }
                 Map<String, Object> params = new HashMap<>();
                 params.put("num", num);
-//                Thread.sleep(5000);
                 NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 params.put("info", info);
                 ctx.render("result.ftl", params);
