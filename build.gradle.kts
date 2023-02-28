@@ -1,6 +1,6 @@
 plugins {
     `java`
-    id("com.github.ben-manes.versions") version "0.44.0"
+    id("com.github.ben-manes.versions") version "0.45.0"
 }
 
 group = "io.github.osobolev"
@@ -35,7 +35,7 @@ tasks {
 }
 
 dependencies {
-    implementation("org.json:json:20220924")
+    implementation("org.json:json:20230227")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     implementation("io.javalin:javalin:5.3.2")
     implementation("io.javalin:javalin-rendering:5.3.2")
