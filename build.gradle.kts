@@ -35,12 +35,12 @@ tasks {
 }
 
 dependencies {
-    implementation("org.json:json:20230227")
+    implementation("org.json:json:20230618")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("io.javalin:javalin:5.3.2")
-    implementation("io.javalin:javalin-rendering:5.3.2")
+    implementation("io.javalin:javalin:5.6.1")
+    implementation("io.javalin:javalin-rendering:5.6.0")
     implementation("org.freemarker:freemarker:2.3.32")
-    runtimeOnly("ch.qos.logback:logback-classic:1.4.5")
+    runtimeOnly("ch.qos.logback:logback-classic:1.4.8")
 }
 
 tasks.jar {
