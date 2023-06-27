@@ -3,14 +3,9 @@ package arshin;
 import arshin.dto.ItemReg;
 import arshin.dto.ItemVerify;
 import arshin.dto.NumInfo;
-import org.apache.hc.client5.http.classic.methods.HttpGet;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.net.URIBuilder;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.core5.http.*;
+import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -38,7 +33,7 @@ final class Download {
         }
     }
 
-    private static JSONObject parse(CloseableHttpResponse response) throws IOException {
+    private static JSONObject parse(ClassicHttpResponse response) throws IOException {
         HttpEntity entity = response.getEntity();
         Charset encoding = getEncoding(entity, StandardCharsets.UTF_8);
         JSONTokener parser = new JSONTokener(new InputStreamReader(entity.getContent(), encoding));
@@ -50,14 +45,14 @@ final class Download {
         }
     }
 
-    private static CloseableHttpResponse execute(CloseableHttpClient client, ClassicHttpRequest request, String referer) throws IOException {
+    private static JSONObject execute(HttpClient client, ClassicHttpRequest request, String referer) throws IOException {
         request.setHeader(HttpHeaders.ACCEPT, "*/*");
         request.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "accept-language: en-US,en;q=0.9,ru");
         request.setHeader(HttpHeaders.REFERER, referer);
-        return client.execute(request);
+        return client.execute(request, Download::parse);
     }
 
-    static List<ItemReg> listRegItems(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
+    static List<ItemReg> listRegItems(HttpClient client, String num, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemReg testItem = new ItemReg(
                 "Test name", "Test type", "Test manufacturer",
@@ -69,7 +64,7 @@ final class Download {
         int pageNumber = 1;
         int pageSize = 20;
         while (true) {
-            URIBuilder buf = new URIBuilder("https://fgis.gost.ru/fundmetrology/api/registry/4/data");
+            ClassicRequestBuilder buf = ClassicRequestBuilder.get("https://fgis.gost.ru/fundmetrology/api/registry/4/data");
             buf.addParameter("pageNumber", String.valueOf(pageNumber));
             buf.addParameter("pageSize", String.valueOf(pageSize));
             buf.addParameter("orgID", "CURRENT_ORG");
@@ -77,15 +72,13 @@ final class Download {
             buf.addParameter("filterValues", num);
 //                buf.addParameter("filterBy", "foei:NameSI");
 //                buf.addParameter("filterValues", "Энергосбыт");
-            HttpGet get = new HttpGet(buf.build());
-            try (CloseableHttpResponse response = execute(client, get, "https://fgis.gost.ru/fundmetrology/registry/4")) {
-                JSONObject value = parse(response);
-                Parser.RegPage page = Parser.parseReg(value, num, list);
-                if (page.portion <= 0 || list.size() >= page.totalCount)
-                    break;
-                progress.accept((double) list.size() / page.totalCount);
-                pageNumber++;
-            }
+            ClassicHttpRequest get = buf.build();
+            JSONObject value = execute(client, get, "https://fgis.gost.ru/fundmetrology/registry/4");
+            Parser.RegPage page = Parser.parseReg(value, num, list);
+            if (page.portion <= 0 || list.size() >= page.totalCount)
+                break;
+            progress.accept((double) list.size() / page.totalCount);
+            pageNumber++;
         }
         progress.accept(1.0);
         return list;
@@ -102,7 +95,7 @@ final class Download {
         }
     }
 
-    static VerifyItems listVerifyItems(CloseableHttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
+    static VerifyItems listVerifyItems(HttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemVerify testItem = new ItemVerify(
                 "Test org", "Test type name", "Test type", "Test modification", "Test num", "Test verify date", "Test valid to", "Test doc num", "Test acceptable",
@@ -115,34 +108,32 @@ final class Download {
         int rows = 20;
         boolean extraItems = false;
         while (true) {
-            URIBuilder buf = new URIBuilder("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
+            ClassicRequestBuilder buf = ClassicRequestBuilder.get("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
             buf.addParameter("fq", "mi.mitnumber:" + num);
             buf.addParameter("q", "*");
             buf.addParameter("fl", "vri_id,org_title,mi.mitnumber,mi.mititle,mi.mitype,mi.modification,mi.number,verification_date,valid_date,applicability,result_docnum,sticker_num");
             buf.addParameter("sort", "verification_date desc,org_title asc");
             buf.addParameter("start", String.valueOf(start));
             buf.addParameter("rows", String.valueOf(rows));
-            HttpGet get = new HttpGet(buf.build());
-            try (CloseableHttpResponse response = execute(client, get, "https://fgis.gost.ru/fundmetrology/cm/results/")) {
-                JSONObject value = parse(response);
-                Parser.VerifyPage page = Parser.parseVerify(value, list, limit);
-                if (page == null) {
-                    extraItems = true;
-                    break;
-                }
-                int downloaded = page.start + page.portion;
-                if (page.portion <= 0 || downloaded >= page.numFound)
-                    break;
-                start = downloaded;
-                int progressMax = limit > 0 ? Math.min(page.numFound, limit) : page.numFound;
-                progress.accept((double) downloaded / progressMax);
+            ClassicHttpRequest get = buf.build();
+            JSONObject value = execute(client, get, "https://fgis.gost.ru/fundmetrology/cm/results/");
+            Parser.VerifyPage page = Parser.parseVerify(value, list, limit);
+            if (page == null) {
+                extraItems = true;
+                break;
             }
+            int downloaded = page.start + page.portion;
+            if (page.portion <= 0 || downloaded >= page.numFound)
+                break;
+            start = downloaded;
+            int progressMax = limit > 0 ? Math.min(page.numFound, limit) : page.numFound;
+            progress.accept((double) downloaded / progressMax);
         }
         progress.accept(1.0);
         return new VerifyItems(list, extraItems);
     }
 
-    static NumInfo getNumInfo(CloseableHttpClient client, String num, DoubleConsumer progress) throws Exception {
+    static NumInfo getNumInfo(HttpClient client, String num, DoubleConsumer progress) throws Exception {
         List<ItemReg> regItems = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
         VerifyItems verifyItems = listVerifyItems(client, num, 200, prc -> progress.accept(0.5 + prc * 0.5));
         return new NumInfo(regItems, verifyItems.items, verifyItems.extraItems);
