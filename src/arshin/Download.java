@@ -33,13 +33,25 @@ final class Download {
         }
     }
 
-    private static JSONObject parse(ClassicHttpResponse response) throws IOException {
+    private static final class Success<T> {
+
+        final T result;
+
+        Success(T result) {
+            this.result = result;
+        }
+    }
+
+    private static Success<JSONObject> parse(ClassicHttpResponse response) throws IOException {
+        int code = response.getCode();
+        if (code == 403 || code >= 500)
+            return null;
         HttpEntity entity = response.getEntity();
         Charset encoding = getEncoding(entity, StandardCharsets.UTF_8);
         JSONTokener parser = new JSONTokener(new InputStreamReader(entity.getContent(), encoding));
         Object value = parser.nextValue();
         if (value instanceof JSONObject) {
-            return (JSONObject) value;
+            return new Success<>((JSONObject) value);
         } else {
             throw new IOException("Unexpected response: " + value);
         }
@@ -49,7 +61,18 @@ final class Download {
         request.setHeader(HttpHeaders.ACCEPT, "*/*");
         request.setHeader(HttpHeaders.ACCEPT_LANGUAGE, "accept-language: en-US,en;q=0.9,ru");
         request.setHeader(HttpHeaders.REFERER, referer);
-        return client.execute(request, Download::parse);
+        for (int i = 0; i < 3; i++) {
+            Success<JSONObject> success = client.execute(request, Download::parse);
+            if (success != null)
+                return success.result;
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+        throw new IOException("Request is forbidden: " + request);
     }
 
     static List<ItemReg> listRegItems(HttpClient client, String num, DoubleConsumer progress) throws Exception {
