@@ -36,9 +36,9 @@ tasks {
 
 dependencies {
     implementation("org.json:json:20231013")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.3")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.3")
     implementation("io.javalin:javalin:5.6.3")
-    implementation("io.javalin:javalin-rendering:5.6.2")
+    implementation("io.javalin:javalin-rendering:5.6.3")
     implementation("org.freemarker:freemarker:2.3.32")
     runtimeOnly("ch.qos.logback:logback-classic:1.4.14")
 }
