@@ -21,7 +21,7 @@ sourceSets {
         java.srcDir("src")
         resources.srcDir("resources")
     }
-    test {
+    create("manual") {
         java.srcDir("test")
         resources.srcDir("testResources")
     }
@@ -43,6 +43,14 @@ dependencies {
     implementation("io.javalin:javalin-rendering:6.0.1")
     implementation("org.freemarker:freemarker:2.3.32")
     runtimeOnly("ch.qos.logback:logback-classic:1.5.0")
+}
+
+configurations["manualImplementation"].extendsFrom(configurations["implementation"])
+configurations["manualRuntimeOnly"].extendsFrom(configurations["runtimeOnly"])
+configurations["manualCompileOnly"].extendsFrom(configurations["compileOnly"])
+
+dependencies {
+    "manualImplementation"(sourceSets["main"].output)
 }
 
 tasks.jar {
