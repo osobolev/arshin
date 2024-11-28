@@ -90,7 +90,7 @@ public final class WebApp {
                 return builder.setConnectionManager(cman).build();
             });
 
-            Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_32);
+            Configuration ftlConfig = new Configuration(Configuration.VERSION_2_3_33);
             ftlConfig.setOutputFormat(HTMLOutputFormat.INSTANCE);
             ftlConfig.setDefaultEncoding("UTF-8");
             ftlConfig.setTemplateLoader(new FileTemplateLoader(new File("web")));
