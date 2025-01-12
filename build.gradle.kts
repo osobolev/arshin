@@ -42,7 +42,7 @@ dependencies {
     }
     implementation("io.javalin:javalin-rendering:6.4.0")
     implementation("org.freemarker:freemarker:2.3.34")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.15")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.16")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
