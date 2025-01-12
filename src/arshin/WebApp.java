@@ -83,7 +83,7 @@ public final class WebApp {
 
             Supplier<CloseableHttpClient> client = new ExpiredSupplier<>(6, TimeUnit.HOURS, () -> {
                 HttpClientBuilder builder = HttpClients.custom();
-                builder.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36");
+                builder.setUserAgent(Download.USER_AGENT);
                 setupProxy(props, builder);
                 PoolingHttpClientConnectionManager cman = new PoolingHttpClientConnectionManager();
                 cman.setMaxTotal(50);
