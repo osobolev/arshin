@@ -115,9 +115,9 @@ public final class WebApp {
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
+                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 Map<String, Object> params = new HashMap<>();
                 params.put("num", num);
-                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 params.put("info", info);
                 ctx.render("result.ftl", params);
             });
