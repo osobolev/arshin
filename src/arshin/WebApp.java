@@ -100,15 +100,6 @@ public final class WebApp {
                 cfg.staticFiles.add("web/public", Location.EXTERNAL);
                 cfg.fileRenderer(new JavalinFreemarker(ftlConfig));
             });
-            app.get("/arshin/json", ctx -> {
-                String num = normalize(ctx.queryParam("num"));
-                LOGGER.info("Request /arshin/json for {} from {}", num, ip(ctx));
-                if (num == null) {
-                    throw new BadRequestResponse();
-                }
-                Download.NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
-                ctx.json(info);
-            });
             app.get("/arshin/html", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
                 LOGGER.info("Request /arshin/html for {} from {}", num, ip(ctx));
