@@ -36,10 +36,10 @@ public final class WebApp {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WebApp.class);
 
-    private static String normalize(String num) {
-        if (num == null)
+    private static String normalize(String param) {
+        if (param == null)
             return null;
-        String trimmed = num.trim();
+        String trimmed = param.trim();
         if (trimmed.isEmpty())
             return null;
         return trimmed;
