@@ -2,7 +2,8 @@ package arshin;
 
 import arshin.dto.ItemReg;
 import arshin.dto.ItemVerify;
-import arshin.dto.NumInfo;
+import arshin.dto.RegInfo;
+import arshin.dto.VerifyInfo;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
@@ -77,13 +78,13 @@ final class Download {
         throw new IOException("Request is forbidden: " + request);
     }
 
-    static List<ItemReg> listRegItems(HttpClient client, String num, DoubleConsumer progress) throws Exception {
+    static RegInfo listRegItems(HttpClient client, String num, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemReg testItem = new ItemReg(
                 "Test name", "Test type", "Test manufacturer",
                 "http://localhost:8080/test"
             );
-            return Collections.singletonList(testItem);
+            return new RegInfo(Collections.singletonList(testItem));
         }
         List<ItemReg> list = new ArrayList<>();
         int pageNumber = 1;
@@ -106,27 +107,16 @@ final class Download {
             pageNumber++;
         }
         progress.accept(1.0);
-        return list;
+        return new RegInfo(list);
     }
 
-    static final class VerifyItems {
-
-        final List<ItemVerify> items;
-        final boolean extraItems;
-
-        VerifyItems(List<ItemVerify> items, boolean extraItems) {
-            this.items = items;
-            this.extraItems = extraItems;
-        }
-    }
-
-    static VerifyItems listVerifyItems(HttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
+    static VerifyInfo listVerifyItems(HttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemVerify testItem = new ItemVerify(
                 "Test org", "Test type name", "Test type", "Test modification", "Test num", "Test verify date", "Test valid to", "Test doc num", "Test acceptable",
                 "http://localhost:8080/test"
             );
-            return new VerifyItems(Collections.nCopies(2, testItem), false);
+            return new VerifyInfo(Collections.nCopies(2, testItem), false);
         }
         List<ItemVerify> list = new ArrayList<>();
         int start = 0;
@@ -155,12 +145,23 @@ final class Download {
             progress.accept((double) downloaded / progressMax);
         }
         progress.accept(1.0);
-        return new VerifyItems(list, extraItems);
+        return new VerifyInfo(list, extraItems);
+    }
+
+    static final class NumInfo {
+
+        final RegInfo regInfo;
+        final VerifyInfo verifyInfo;
+
+        NumInfo(RegInfo regInfo, VerifyInfo verifyInfo) {
+            this.regInfo = regInfo;
+            this.verifyInfo = verifyInfo;
+        }
     }
 
     static NumInfo getNumInfo(HttpClient client, String num, DoubleConsumer progress) throws Exception {
-        List<ItemReg> regItems = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
-        VerifyItems verifyItems = listVerifyItems(client, num, 200, prc -> progress.accept(0.5 + prc * 0.5));
-        return new NumInfo(regItems, verifyItems.items, verifyItems.extraItems);
+        RegInfo regInfo = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
+        VerifyInfo verifyInfo = listVerifyItems(client, new VerifyFilter(num, null, null, null), 200, prc -> progress.accept(0.5 + prc * 0.5));
+        return new NumInfo(regInfo, verifyInfo);
     }
 }

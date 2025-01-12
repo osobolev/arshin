@@ -1,9 +1,10 @@
 <#-- @ftlvariable name="num" type="java.lang.String" -->
-<#-- @ftlvariable name="info" type="arshin.dto.NumInfo" -->
+<#-- @ftlvariable name="regInfo" type="arshin.dto.RegInfo" -->
+<#-- @ftlvariable name="verifyInfo" type="arshin.dto.VerifyInfo" -->
 
 <h1>Результаты поиска по номеру в госреестре ${num}</h1>
 
-<#if info.regItems?has_content>
+<#if regInfo.regItems?has_content>
 
     <h2>Утвержденные типы средств измерений</h2>
     <table>
@@ -13,7 +14,7 @@
             <th>Изготовитель</th>
             <th></th>
         </tr>
-        <#list info.regItems as item>
+        <#list regInfo.regItems as item>
             <tr>
                 <td>${item.name}</td>
                 <td>${item.type}</td>
@@ -29,10 +30,10 @@
 
 </#if>
 
-<#if info.verifyItems?has_content>
+<#if verifyInfo.verifyItems?has_content>
 
     <h2>Сведения о результатах поверки средств измерений</h2>
-    <h3>Всего результатов найдено: ${info.verifyCount}</h3>
+    <h3>Всего результатов найдено: ${verifyInfo.verifyCount}</h3>
     <table>
         <tr>
             <th>Организация-поверитель</th>
@@ -46,7 +47,7 @@
             <th>Пригодность</th>
             <th></th>
         </tr>
-        <#list info.verifyItems as item>
+        <#list verifyInfo.verifyItems as item>
             <tr>
                 <td>${item.organization}</td>
                 <td>${item.typeName}</td>
@@ -60,7 +61,7 @@
                 <td><a href="${item.link}" target="_blank">Просмотреть в ФГИС «Аршин»</a></td>
             </tr>
         </#list>
-        <#if info.extraVerifyItems>
+        <#if verifyInfo.extraVerifyItems>
             <tr>
                 <td>...</td>
                 <td>...</td>

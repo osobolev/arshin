@@ -1,6 +1,6 @@
 package arshin;
 
-import arshin.dto.NumInfo;
+import arshin.dto.VerifyInfo;
 import freemarker.cache.FileTemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
@@ -106,7 +106,7 @@ public final class WebApp {
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
-                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
+                Download.NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 ctx.json(info);
             });
             app.get("/arshin/html", ctx -> {
@@ -115,10 +115,11 @@ public final class WebApp {
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
-                NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
+                Download.NumInfo info = Download.getNumInfo(client.get(), num, prc -> {});
                 Map<String, Object> params = new HashMap<>();
                 params.put("num", num);
-                params.put("info", info);
+                params.put("regInfo", info.regInfo);
+                params.put("verifyInfo", info.verifyInfo);
                 ctx.render("result.ftl", params);
             });
 
