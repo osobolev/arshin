@@ -42,6 +42,7 @@ dependencies {
     }
     implementation("io.javalin:javalin-rendering:6.4.0")
     implementation("org.freemarker:freemarker:2.3.34")
+    runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.24")
     runtimeOnly("ch.qos.logback:logback-classic:1.5.16")
 }
 
