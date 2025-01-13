@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -110,7 +111,7 @@ final class Download {
         return new RegInfo(list);
     }
 
-    static VerifyInfo listVerifyItems(HttpClient client, String num, int limit, DoubleConsumer progress) throws Exception {
+    static VerifyInfo listVerifyItems(HttpClient client, VerifyFilter filter, int limit, DoubleConsumer progress) throws Exception {
         if (client == null) {
             ItemVerify testItem = new ItemVerify(
                 "Test org", "Test type name", "Test type", "Test modification", "Test num", "Test verify date", "Test valid to", "Test doc num", "Test acceptable",
@@ -124,7 +125,24 @@ final class Download {
         boolean extraItems = false;
         while (true) {
             ClassicRequestBuilder buf = ClassicRequestBuilder.get("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
-            buf.addParameter("fq", "mi.mitnumber:" + num);
+            if (filter.regNum != null) {
+                buf.addParameter("fq", "mi.mitnumber:" + filter.regNum);
+            }
+            if (filter.year != null) {
+                buf.addParameter("fq", "verification_year:" + filter.year);
+                if (filter.month != null) {
+                    YearMonth ym = YearMonth.of(filter.year.intValue(), filter.month.intValue());
+                    buf.addParameter("fq", String.format(
+                        "verification_date:[%sT00:00:00Z TO %sT23:59:59Z]",
+                        ym.atDay(1), ym.atEndOfMonth()
+                    ));
+                }
+            }
+            if (filter.serial != null) {
+                buf.addParameter("fq", "mi.mititle:Счетчики* Счётчики*");
+                // todo: add "*" for fuzzy search??? "-fq=mi.number:*269317565*"
+                buf.addParameter("fq", "mi.number:" + filter.serial);
+            }
             buf.addParameter("q", "*");
             buf.addParameter("fl", "vri_id,org_title,mi.mitnumber,mi.mititle,mi.mitype,mi.modification,mi.number,verification_date,valid_date,applicability,result_docnum,sticker_num");
             buf.addParameter("sort", "verification_date desc,org_title asc");
