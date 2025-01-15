@@ -4,5 +4,6 @@ build/
 .idea/
 /distr
 /examples
+/nginx
 /test
 *.log
