@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Публичный портал проверки средств измерений (СИ) в ФГИС «Аршин»</title>
+
+    <!-- Yandex.Metrika informer -->
+    <a href="https://metrika.yandex.com/stat/?id=89295190&amp;from=informer"
+    target="_blank" rel="nofollow"><img src="https://informer.yandex.ru/informer/89295190/3_1_FFFFFFFF_EFEFEFFF_0_pageviews"
+    style="width:88px; height:31px; border:0; position: fixed; right: 5px; bottom: 10px; z-index: 10" alt="Яндекс.Метрика" title="Яндекс.Метрика: данные за сегодня (просмотры, визиты и уникальные посетители)" class="ym-advanced-informer" data-cid="89295190" data-lang="ru" /></a>
+    <!-- /Yandex.Metrika informer -->
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(89295190, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/89295190" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+
+    <link rel="stylesheet" href="style.css">
+    <script src="arshin2.js"></script>
+
+</head>
+<body onload="init()">
+
+<div id="main">
+    <form>
+        <h2 style="margin-top: 0;">Выберите год поверки счетчика:</h2>
+        <div id="yearsList" class="radio-toolbar">
+<!--            <input type="radio" id="year2020" name="year" value="2020"/><label for="year2020">2020</label>-->
+        </div>
+        <h2 style="margin-top: 0;">Выберите месяц поверки счетчика:</h2>
+        <div class="radio-toolbar" style="margin-bottom: 20px;">
+            <input type="radio" id="month01" name="month" value="01"/><label for="month01">Январь</label>
+            <input type="radio" id="month02" name="month" value="02"/><label for="month02">Февраль</label>
+            <input type="radio" id="month03" name="month" value="03"/><label for="month03">Март</label>
+            <input type="radio" id="month04" name="month" value="04"/><label for="month04">Апрель</label>
+            <input type="radio" id="month05" name="month" value="05"/><label for="month05">Май</label>
+            <input type="radio" id="month06" name="month" value="06"/><label for="month06">Июнь</label>
+            <input type="radio" id="month07" name="month" value="07"/><label for="month07">Июль</label>
+            <input type="radio" id="month08" name="month" value="08"/><label for="month08">Август</label>
+            <input type="radio" id="month09" name="month" value="09"/><label for="month09">Сентябрь</label>
+            <input type="radio" id="month10" name="month" value="10"/><label for="month10">Октябрь</label>
+            <input type="radio" id="month11" name="month" value="11"/><label for="month11">Ноябрь</label>
+            <input type="radio" id="month12" name="month" value="12"/><label for="month12">Декабрь</label>
+        </div>
+        <input type="text" size="45" id="serial" name="serial" placeholder="Введите заводской номер счетчика"
+               oninput="resetErrors()" onkeydown="keyDown(event)" autofocus>
+        <input type="button" id="btnSearch" value="Найти" onclick="search()">
+    </form>
+</div>
+
+<div id="result"><h2>Проверьте свой счетчик в базе АРШИН за считанные секунды!</h2></div>
+
+<div id="footer"><a href="help.html" target="_blank">Помощь</a></div>
+
+</body>
+</html>

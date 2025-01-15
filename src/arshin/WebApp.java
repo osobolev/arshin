@@ -45,6 +45,12 @@ public final class WebApp {
         return trimmed;
     }
 
+    private static Integer tryParse(String str) {
+        if (str == null || str.isEmpty())
+            return null;
+        return Integer.valueOf(str);
+    }
+
     private static void setupProxy(Properties props, HttpClientBuilder builder) {
         String host = props.getProperty("proxy.host");
         String port = props.getProperty("proxy.port");
@@ -112,6 +118,29 @@ public final class WebApp {
                 params.put("regInfo", info.regInfo);
                 params.put("verifyInfo", info.verifyInfo);
                 ctx.render("result.ftl", params);
+            });
+            app.get("/arshin2/html", ctx -> {
+                String serial = normalize(ctx.queryParam("serial"));
+                String yearStr = normalize(ctx.queryParam("year"));
+                String monthStr = normalize(ctx.queryParam("month"));
+                LOGGER.info("Request /arshin2/html for {}/{}/{} from {}", serial, yearStr, monthStr, ip(ctx));
+                if (serial == null) {
+                    throw new BadRequestResponse();
+                }
+                Integer year;
+                Integer month;
+                try {
+                    year = tryParse(yearStr);
+                    month = tryParse(monthStr);
+                } catch (NumberFormatException ex) {
+                    throw new BadRequestResponse();
+                }
+                VerifyFilter filter = new VerifyFilter(null, year, month, serial);
+                VerifyInfo verifyInfo = Download.listVerifyItems(client.get(), filter, 200, prc -> {});
+                Map<String, Object> params = new HashMap<>();
+                params.put("serial", serial);
+                params.put("verifyInfo", verifyInfo);
+                ctx.render("result2.ftl", params);
             });
 
             int port = Integer.parseInt(props.getProperty("port", "8080"));
