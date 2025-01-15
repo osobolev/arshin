@@ -18,6 +18,7 @@ import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.function.DoubleConsumer;
 
 final class Download {
@@ -139,9 +140,12 @@ final class Download {
                 }
             }
             if (filter.serial != null) {
-                buf.addParameter("fq", "mi.mititle:Счетчики* Счётчики*");
-                // todo: add "*" for fuzzy search??? "-fq=mi.number:*269317565*"
-                buf.addParameter("fq", "mi.number:" + filter.serial);
+                buf.addParameter("fq", "mi.mititle:*Счетчики* *Счётчики*");
+                StringTokenizer tok = new StringTokenizer(filter.serial, " ");
+                while (tok.hasMoreTokens()) {
+                    String t = tok.nextToken().trim();
+                    buf.addParameter("fq", "mi.number:*" + t + "*");
+                }
             }
             buf.addParameter("q", "*");
             buf.addParameter("fl", "vri_id,org_title,mi.mitnumber,mi.mititle,mi.mitype,mi.modification,mi.number,verification_date,valid_date,applicability,result_docnum,sticker_num");
