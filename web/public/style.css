@@ -5,7 +5,9 @@ body {
 
 #main {
     background: #d6e7f1;
-    padding: 30px 30px 30px 30px;
+    padding-bottom: 20px;
+    padding-left: 30px;
+    padding-right: 30px;
     color: #264e8f;
 }
 
@@ -28,7 +30,7 @@ body {
 
 #footer a {
     color: white;
-    font-size: 20pt;
+    font-size: 18pt;
     font-weight: bold;
     text-decoration: none;
     text-transform: uppercase;
@@ -42,7 +44,7 @@ body {
 }
 
 input {
-    font-size: 20pt;
+    font-size: 18pt;
 }
 
 input[type=text] {
@@ -81,14 +83,14 @@ input[type=text]:focus, input[type=text]:hover {
 .radio-toolbar label {
     display: table-cell;
     background-color: #ddd;
-    padding: 10px 20px;
+    padding: 7px 16px;
     border: 0.0625rem solid #888;
     border-radius: 0.25rem;
     cursor: pointer;
 }
 
 .radio-toolbar input[type="radio"][name="year"] + label {
-    font-size: 20pt;
+    font-size: 16pt;
 }
 
 .radio-toolbar input[type="radio"][name="month"] + label {
@@ -154,7 +156,7 @@ table th, table td {
 }
 
 .label {
-    padding: 10px 50px;
+    padding: 9px 50px 7px 50px;
     margin-right: -1px;
     font-weight: bold;
     font-size: 18px;
