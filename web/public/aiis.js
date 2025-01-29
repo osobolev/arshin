@@ -31,7 +31,7 @@ async function search() {
         return;
     }
     if (num !== getUrlNum()) {
-        history.pushState({}, "", "/?" + new URLSearchParams({num}));
+        history.pushState({}, "", "/aiis.html?" + new URLSearchParams({num}));
     }
     const btn = document.getElementById('btnSearch');
     const result = document.getElementById('result');
@@ -40,7 +40,7 @@ async function search() {
     result.innerHTML = `<h2>Поиск по номеру в госреестре ${escapeHtml(num)}... <img src="/loading.gif" width="24px" alt="Пожалуйста подождите..."></h2>`;
     let html = '<h1 class="error">Ошибка при обращении к ФГИС «Аршин»</h1>';
     try {
-        const response = await fetch('/arshin/html?' + new URLSearchParams({num}));
+        const response = await fetch('/arshin/aiis/html?' + new URLSearchParams({num}));
         if (response.ok) {
             html = await response.text();
         }

@@ -106,7 +106,7 @@ public final class WebApp {
                 cfg.staticFiles.add("web/public", Location.EXTERNAL);
                 cfg.fileRenderer(new JavalinFreemarker(ftlConfig));
             });
-            app.get("/arshin/html", ctx -> {
+            app.get("/arshin/aiis/html", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
                 LOGGER.info("Request {} for {} from {}", ctx.matchedPath(), num, ip(ctx));
                 if (num == null) {
@@ -119,7 +119,7 @@ public final class WebApp {
                 params.put("verifyInfo", info.verifyInfo);
                 ctx.render("result.ftl", params);
             });
-            app.get("/arshin2/html", ctx -> {
+            app.get("/arshin/counter/html", ctx -> {
                 String serial = normalize(ctx.queryParam("serial"));
                 String yearStr = normalize(ctx.queryParam("year"));
                 String monthStr = normalize(ctx.queryParam("month"));
