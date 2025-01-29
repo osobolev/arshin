@@ -7,8 +7,7 @@ import arshin.dto.VerifyInfo;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.*;
 import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import smalljson.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -20,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.function.DoubleConsumer;
+
+import static smalljson.JSONFactory.JSON;
 
 final class Download {
 
@@ -53,13 +54,8 @@ final class Download {
             return null;
         HttpEntity entity = response.getEntity();
         Charset encoding = getEncoding(entity, StandardCharsets.UTF_8);
-        JSONTokener parser = new JSONTokener(new InputStreamReader(entity.getContent(), encoding));
-        Object value = parser.nextValue();
-        if (value instanceof JSONObject) {
-            return new Success<>((JSONObject) value);
-        } else {
-            throw new IOException("Unexpected response: " + value);
-        }
+        JSONObject value = JSON.parseObject(new InputStreamReader(entity.getContent(), encoding));
+        return new Success<>(value);
     }
 
     private static JSONObject execute(HttpClient client, ClassicHttpRequest request, String referer) throws IOException {

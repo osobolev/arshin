@@ -2,8 +2,8 @@ package arshin;
 
 import arshin.dto.ItemReg;
 import arshin.dto.ItemVerify;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import smalljson.JSONArray;
+import smalljson.JSONObject;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -28,7 +28,7 @@ final class Parser {
         } else if (value instanceof JSONArray) {
             JSONArray array = (JSONArray) value;
             return array.toList().stream().map(Parser::toString).collect(Collectors.joining(", "));
-        } else if (value == null || JSONObject.NULL.equals(value)) {
+        } else if (value == null) {
             return "";
         } else {
             return value.toString();
@@ -47,16 +47,16 @@ final class Parser {
     }
 
     static RegPage parseReg(JSONObject root, String num, List<ItemReg> list) throws IOException {
-        int status = root.getInt("status");
+        int status = root.get("status", int.class).intValue();
         if (status != 200) {
             throw new IOException("Error" + status);
         }
-        JSONObject result = root.getJSONObject("result");
-        int totalCount = result.getInt("totalCount");
-        JSONArray items = result.getJSONArray("items");
+        JSONObject result = root.get("result", JSONObject.class);
+        int totalCount = result.get("totalCount", int.class).intValue();
+        JSONArray items = result.get("items", JSONArray.class);
         for (Object anyItem : items) {
             JSONObject item = (JSONObject) anyItem;
-            JSONArray properties = item.getJSONArray("properties");
+            JSONArray properties = item.get("properties", JSONArray.class);
             String name = "";
             String type = "";
             String manufacturer = "";
@@ -64,7 +64,7 @@ final class Parser {
             String id = toString(item.get("id"));
             for (Object anyProperty : properties) {
                 JSONObject property = (JSONObject) anyProperty;
-                String propName = property.getString("name");
+                String propName = property.get("name", String.class);
                 Object propValue = property.opt("value");
                 if ("foei:NameSI".equals(propName)) {
                     name = toString(propValue);
@@ -111,25 +111,24 @@ final class Parser {
     }
 
     private static String unnull(JSONObject obj, String field) {
-        String str = obj.optString(field);
-        return str == null ? "" : str;
+        return obj.opt(field, String.class, "");
     }
 
     static VerifyPage parseVerify(JSONObject root, List<ItemVerify> list, int limit) throws IOException {
-        JSONObject header = root.getJSONObject("responseHeader");
-        int status = header.getInt("status");
+        JSONObject header = root.get("responseHeader", JSONObject.class);
+        int status = header.get("status", int.class).intValue();
         if (status != 0) {
             String message = null;
             Object error = root.opt("error");
             if (error instanceof JSONObject) {
-                message = ((JSONObject) error).optString("msg");
+                message = ((JSONObject) error).opt("msg", String.class);
             }
             throw new IOException(message == null ? "Error " + status : message);
         }
-        JSONObject response = root.getJSONObject("response");
-        int numFound = response.getInt("numFound");
-        int start = response.getInt("start");
-        JSONArray docs = response.getJSONArray("docs");
+        JSONObject response = root.get("response", JSONObject.class);
+        int numFound = response.get("numFound", int.class).intValue();
+        int start = response.get("start", int.class).intValue();
+        JSONArray docs = response.get("docs", JSONArray.class);
         for (Object anyItem : docs) {
             if (limit > 0 && list.size() >= limit)
                 return null;
@@ -139,10 +138,10 @@ final class Parser {
             String type = unnull(item, "mi.mitype");
             String modification = unnull(item, "mi.modification");
             String factoryNum = unnull(item, "mi.number");
-            String verifyDate = formatDate(item.optString("verification_date"));
-            String validTo = formatDate(item.optString("valid_date"));
+            String verifyDate = formatDate(item.opt("verification_date", String.class));
+            String validTo = formatDate(item.opt("valid_date", String.class));
             String docNum = unnull(item, "result_docnum");
-            String acceptable = item.getBoolean("applicability") ? "ГОДЕН" : "НЕ ГОДЕН";
+            String acceptable = item.get("applicability", boolean.class).booleanValue() ? "ГОДЕН" : "НЕ ГОДЕН";
             String vriId = unnull(item, "vri_id");
             list.add(new ItemVerify(
                 organization, typeName, type, modification, factoryNum, verifyDate, validTo, docNum, acceptable,
