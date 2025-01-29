@@ -39,7 +39,26 @@
 
 <div id="main">
     <form>
-        <input type="text" size="45" id="num" name="num" placeholder="Введите регистрационный номер АИИС КУЭ"
+        <h2 style="margin-top: 0;">Выберите год поверки счетчика:</h2>
+        <div id="yearsList" class="radio-toolbar">
+<!--            <input type="radio" id="year2020" name="year" value="2020"/><label for="year2020">2020</label>-->
+        </div>
+        <h2 style="margin-top: 0;">Выберите месяц поверки счетчика:</h2>
+        <div class="radio-toolbar" style="margin-bottom: 20px;">
+            <input type="radio" id="month01" name="month" value="01"/><label for="month01">Январь</label>
+            <input type="radio" id="month02" name="month" value="02"/><label for="month02">Февраль</label>
+            <input type="radio" id="month03" name="month" value="03"/><label for="month03">Март</label>
+            <input type="radio" id="month04" name="month" value="04"/><label for="month04">Апрель</label>
+            <input type="radio" id="month05" name="month" value="05"/><label for="month05">Май</label>
+            <input type="radio" id="month06" name="month" value="06"/><label for="month06">Июнь</label>
+            <input type="radio" id="month07" name="month" value="07"/><label for="month07">Июль</label>
+            <input type="radio" id="month08" name="month" value="08"/><label for="month08">Август</label>
+            <input type="radio" id="month09" name="month" value="09"/><label for="month09">Сентябрь</label>
+            <input type="radio" id="month10" name="month" value="10"/><label for="month10">Октябрь</label>
+            <input type="radio" id="month11" name="month" value="11"/><label for="month11">Ноябрь</label>
+            <input type="radio" id="month12" name="month" value="12"/><label for="month12">Декабрь</label>
+        </div>
+        <input type="text" size="45" id="serial" name="serial" placeholder="Введите заводской номер счетчика"
                oninput="resetErrors()" onkeydown="keyDown(event)" autofocus>
         <input type="button" id="btnSearch" value="Найти" onclick="search()">
     </form>
