@@ -148,3 +148,40 @@ table th, table td {
 .error {
     color: red;
 }
+
+.tabs {
+    display: flex;
+}
+
+.label {
+    padding: 10px 50px;
+    margin-right: -1px;
+    font-weight: bold;
+    font-size: 18px;
+    border-top: 1px solid rgba(70, 166, 255, 0.5);
+    border-left: 1px solid rgba(70, 166, 255, 0.5);
+    border-right: 1px solid rgba(70, 166, 255, 0.5);
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    text-decoration: none;
+}
+
+.label.activeTab {
+    color: #264e8f;
+    background: #d6e7f1;
+}
+
+.label.inactiveTab {
+    color: #7f7f7f;
+    background: #e5e5e5;
+    border-bottom: 1px solid rgba(70, 166, 255, 0.5);
+}
+
+.label.inactiveTab:hover {
+    background: #d6e7f150;
+}
+
+.filler {
+    border-bottom: 1px solid rgba(70, 166, 255, 0.5);
+    flex-grow: 1;
+}
