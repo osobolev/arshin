@@ -108,7 +108,7 @@ public final class WebApp {
             });
             app.get("/arshin/html", ctx -> {
                 String num = normalize(ctx.queryParam("num"));
-                LOGGER.info("Request /arshin/html for {} from {}", num, ip(ctx));
+                LOGGER.info("Request {} for {} from {}", ctx.matchedPath(), num, ip(ctx));
                 if (num == null) {
                     throw new BadRequestResponse();
                 }
@@ -123,7 +123,7 @@ public final class WebApp {
                 String serial = normalize(ctx.queryParam("serial"));
                 String yearStr = normalize(ctx.queryParam("year"));
                 String monthStr = normalize(ctx.queryParam("month"));
-                LOGGER.info("Request /arshin2/html for {}/{}/{} from {}", serial, yearStr, monthStr, ip(ctx));
+                LOGGER.info("Request {} for {}/{}/{} from {}", ctx.matchedPath(), serial, yearStr, monthStr, ip(ctx));
                 if (serial == null) {
                     throw new BadRequestResponse();
                 }
