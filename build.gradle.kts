@@ -35,7 +35,7 @@ tasks {
 }
 
 dependencies {
-    implementation("io.github.osobolev:small-json:1.2")
+    implementation("io.github.osobolev:small-json:1.3")
     implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
     implementation("io.javalin:javalin:6.4.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
