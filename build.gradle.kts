@@ -36,14 +36,14 @@ tasks {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.1")
-    implementation("io.javalin:javalin:6.4.0") {
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.4.4")
+    implementation("io.javalin:javalin:6.6.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }
-    implementation("io.javalin:javalin-rendering:6.4.0")
+    implementation("io.javalin:javalin-rendering:6.6.0")
     implementation("org.freemarker:freemarker:2.3.34")
-    runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.24")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.16")
+    runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.25")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.18")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
@@ -60,6 +60,18 @@ tasks.jar {
             "Class-Path" to configurations.runtimeClasspath.map { conf -> conf.files.map { f -> f.name }.sorted().joinToString(" ") },
             "Main-Class" to "arshin.WebApp"
         )
+    }
+}
+
+tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class).configureEach {
+    resolutionStrategy {
+        componentSelection {
+            all {
+                if (candidate.version.contains("-a")) {
+                    reject("Alpha version")
+                }
+            }
+        }
     }
 }
 
