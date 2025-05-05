@@ -6,7 +6,6 @@ import arshin.dto.RegInfo;
 import arshin.dto.VerifyInfo;
 import org.apache.hc.client5.http.classic.HttpClient;
 import org.apache.hc.core5.http.*;
-import org.apache.hc.core5.http.io.support.ClassicRequestBuilder;
 import smalljson.JSONObject;
 
 import java.io.IOException;
@@ -88,7 +87,7 @@ final class Download {
         int pageNumber = 1;
         int pageSize = 20;
         while (true) {
-            ClassicRequestBuilder buf = ClassicRequestBuilder.get("https://fgis.gost.ru/fundmetrology/api/registry/4/data");
+            MyRequestBuilder buf = new MyRequestBuilder("https://fgis.gost.ru/fundmetrology/api/registry/4/data");
             buf.addParameter("pageNumber", String.valueOf(pageNumber));
             buf.addParameter("pageSize", String.valueOf(pageSize));
             buf.addParameter("orgID", "CURRENT_ORG");
@@ -121,7 +120,7 @@ final class Download {
         int rows = 20;
         boolean extraItems = false;
         while (true) {
-            ClassicRequestBuilder buf = ClassicRequestBuilder.get("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
+            MyRequestBuilder buf = new MyRequestBuilder("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
             if (filter.regNum != null) {
                 buf.addParameter("fq", "mi.mitnumber:" + filter.regNum);
             }
