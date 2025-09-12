@@ -117,7 +117,7 @@ final class Download {
         }
         List<ItemVerify> list = new ArrayList<>();
         int start = 0;
-        int rows = 20;
+        int rows = 100;
         boolean extraItems = false;
         while (true) {
             MyRequestBuilder buf = new MyRequestBuilder("https://fgis.gost.ru/fundmetrology/cm/xcdb/vri/select");
