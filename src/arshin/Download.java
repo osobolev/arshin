@@ -178,7 +178,7 @@ final class Download {
 
     static NumInfo getNumInfo(HttpClient client, String num, DoubleConsumer progress) throws Exception {
         RegInfo regInfo = listRegItems(client, num, prc -> progress.accept(prc * 0.5));
-        VerifyInfo verifyInfo = listVerifyItems(client, new VerifyFilter(num, null, null, null), 200, prc -> progress.accept(0.5 + prc * 0.5));
+        VerifyInfo verifyInfo = listVerifyItems(client, new VerifyFilter(num, null, null, null), 100, prc -> progress.accept(0.5 + prc * 0.5));
         return new NumInfo(regInfo, verifyInfo);
     }
 }

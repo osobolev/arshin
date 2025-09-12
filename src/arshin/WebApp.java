@@ -136,7 +136,7 @@ public final class WebApp {
                     throw new BadRequestResponse();
                 }
                 VerifyFilter filter = new VerifyFilter(null, year, month, serial);
-                VerifyInfo verifyInfo = Download.listVerifyItems(client.get(), filter, 200, prc -> {});
+                VerifyInfo verifyInfo = Download.listVerifyItems(client.get(), filter, 100, prc -> {});
                 Map<String, Object> params = new HashMap<>();
                 params.put("serial", serial);
                 params.put("verifyInfo", verifyInfo);
