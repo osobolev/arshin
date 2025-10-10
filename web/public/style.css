@@ -187,3 +187,23 @@ table th, table td {
     border-bottom: 1px solid rgba(70, 166, 255, 0.5);
     flex-grow: 1;
 }
+
+#bannerLink {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0.25rem;
+    background: #264e8f;
+    color: white;
+    text-decoration: none;
+    font-size: 10pt;
+    transition: background-color 0.1s, transform 0.1s;
+}
+
+#bannerLink:hover {
+    background-color: #3670ce;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#bannerLink:active {
+    transform: translateY(1px);
+}
