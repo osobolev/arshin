@@ -36,14 +36,14 @@ tasks {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.5")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
     implementation("io.javalin:javalin:6.7.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }
     implementation("io.javalin:javalin-rendering:6.7.0")
     implementation("org.freemarker:freemarker:2.3.34")
     runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.26")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.18")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.19")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
