@@ -66,18 +66,18 @@ tasks.jar {
 tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class).configureEach {
     resolutionStrategy {
         componentSelection {
-            all {
+            all(Action<com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent> {
                 if (candidate.version.contains("-a")) {
                     reject("Alpha version")
                 }
-            }
+            })
         }
     }
 }
 
 tasks.named("clean").configure {
     doLast {
-        project.delete("$rootDir/distr")
+        delete("$rootDir/distr")
     }
 }
 
