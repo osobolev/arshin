@@ -73,10 +73,8 @@ tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
     }
 }
 
-tasks.named("clean").configure {
-    doLast {
-        delete("$rootDir/distr")
-    }
+tasks.clean {
+    delete("$rootDir/distr")
 }
 
 tasks.register("distr", Copy::class) {
