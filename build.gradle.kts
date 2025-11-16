@@ -27,11 +27,9 @@ sourceSets {
     }
 }
 
-tasks {
-    withType(JavaCompile::class) {
-        options.encoding = "UTF-8"
-        options.release.set(11)
-    }
+tasks.withType(JavaCompile::class).configureEach {
+    options.encoding = "UTF-8"
+    options.release.set(11)
 }
 
 dependencies {
