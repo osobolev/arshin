@@ -41,7 +41,7 @@ dependencies {
     implementation("io.javalin:javalin-rendering:6.7.0")
     implementation("org.freemarker:freemarker:2.3.34")
     runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.26")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.21")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.22")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
