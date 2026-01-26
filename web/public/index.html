@@ -30,6 +30,8 @@
     <link rel="stylesheet" href="style.css">
     <script src="counter.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.9/dist/inputmask.min.js"></script>
+
 </head>
 <body onload="init()">
 
@@ -66,6 +68,24 @@
     </form>
 </div>
 
+<dialog id="contactDialog" style="position: relative; padding-top: 1.5rem; border-radius: 0.5rem; width: 400px;">
+    <button class="close-icon" id="btn-close">&times;</button>
+    <div style="display: flex; flex-direction: column;">
+        <div id="input-error">Укажите номер телефона</div>
+        <label for="fio" id="fioLabel">ФИО:</label>
+        <input type="text" id="fio" autofocus required>
+
+        <div style="padding-top: 15px;"></div>
+
+        <label for="phone" id="phoneLabel">Телефон:</label>
+        <input type="tel" id="phone" required>
+
+        <div style="padding-top: 30px;"></div>
+
+        <button type="button" id="btn-send">Отправить</button>
+    </div>
+</dialog>
+
 <div id="result">
     <div style="border: 1px dashed black; width: fit-content; padding: 15px 20px; margin-top: 15px;">
         <div style="display: flex; align-items: center;">
@@ -80,6 +100,56 @@
 </div>
 
 <div id="footer"><a href="help.html" target="_blank">Помощь</a></div>
+
+<script >
+    const dialog = document.getElementById("contactDialog");
+
+    const bannerLink = document.getElementById("bannerLink");
+    bannerLink.addEventListener("click", (e) => {
+        if (e.shiftKey) {
+            e.preventDefault();
+            dialog.showModal();
+        }
+    });
+
+    const btnClose = document.getElementById("btn-close");
+    btnClose.addEventListener("click", () => dialog.close());
+
+    dialog.addEventListener("click", (e) => {
+        const rect = dialog.getBoundingClientRect();
+        const isInDialog = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom;
+        if (!isInDialog) {
+            dialog.close();
+        }
+    });
+
+    const fioInput = document.getElementById("fio");
+    const phoneInput = document.getElementById("phone");
+    const im = new Inputmask("+7 (999) 999-99-99");
+    im.mask(phoneInput);
+
+    const btnSend = document.getElementById("btn-send");
+    btnSend.addEventListener("click", () => {
+        if (!phoneInput.inputmask.isComplete()) {
+            const inputError = document.getElementById("input-error");
+            inputError.style.display = "block";
+            phoneInput.style.borderColor = "red";
+            phoneInput.focus();
+            return;
+        }
+        const fio = fioInput.value;
+        const phone = phoneInput.value;
+        const ts = Date.now();
+        const str = fio + ts + phone;
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const ch = str.charCodeAt(i);
+            hash = (hash << 5) - hash + ch;
+            hash |= 0; // Convert to 32bit integer
+        }
+        console.log("Sending: " + fio + " " + phone + " " + hash);
+    });
+</script>
 
 </body>
 </html>

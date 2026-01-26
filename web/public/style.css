@@ -207,3 +207,59 @@ table th, table td {
 #bannerLink:active {
     transform: translateY(1px);
 }
+
+#fio, #phone {
+    margin-top: 3px;
+    font-size: 16px;
+    outline: none;
+    padding: 10px;
+    border: 0.1rem solid rgba(70,166,255,.62);
+    border-radius: 0.25rem;
+}
+
+#fio:focus, #fio:hover, #phone:focus, #phone:hover {
+    border: 0.1rem solid rgba(70,166,255,.62);
+    box-shadow: 0 0 0.3125rem rgb(70 166 255 / 62%);
+}
+
+#btn-send {
+    padding: 10px 15px;
+    border-radius: 0.25rem;
+    background: #264e8f;
+    color: white;
+    font-size: 14pt;
+    font-weight: bold;
+    transition: background-color 0.1s, transform 0.1s;
+    cursor: pointer;
+    width: 65%;
+    align-self: center;
+}
+
+#fioLabel, #phoneLabel {
+    font-weight: bold;
+    color: #444;
+}
+
+#input-error {
+    color: red;
+    align-self: center;
+    display: none;
+}
+
+.close-icon {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    outline: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-icon:hover {
+    color: #ef4444;
+}
