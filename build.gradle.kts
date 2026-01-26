@@ -34,14 +34,14 @@ tasks.withType(JavaCompile::class).configureEach {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.5.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
     implementation("io.javalin:javalin:6.7.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }
     implementation("io.javalin:javalin-rendering:6.7.0")
     implementation("org.freemarker:freemarker:2.3.34")
     runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.26")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.22")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.26")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
@@ -67,6 +67,8 @@ tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
             all(Action<com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent> {
                 if (candidate.version.contains("-a")) {
                     reject("Alpha version")
+                } else if (candidate.version.contains("-b")) {
+                    reject("Beta version")
                 }
             })
         }
