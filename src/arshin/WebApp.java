@@ -19,6 +19,8 @@ import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.apache.hc.core5.http.HttpHost;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import smalljson.JSONFactory;
+import smalljson.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -74,6 +76,29 @@ public final class WebApp {
         if (realIP != null)
             return realIP;
         return ctx.ip();
+    }
+
+    private static int hash(String str) {
+        int hash = 0;
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            hash = (hash << 5) - hash + ch;
+        }
+        return hash;
+    }
+
+    private static boolean sendRequest(JSONObject object) {
+        String fio = object.opt("fio", String.class);
+        String phone = object.opt("phone", String.class);
+        Long ts = object.opt("ts", Long.class);
+        Integer hash = object.opt("hash", Integer.class);
+        if (fio == null || phone == null || ts == null || hash == null)
+            return false;
+        String str = fio + ts + phone;
+        if (hash(str) != hash.intValue())
+            return false;
+        LOGGER.info("APPLICATION: '{}', {}", fio, phone);
+        return true;
     }
 
     public static void main(String[] args) {
@@ -141,6 +166,13 @@ public final class WebApp {
                 params.put("serial", serial);
                 params.put("verifyInfo", verifyInfo);
                 ctx.render("result2.ftl", params);
+            });
+            app.post("/arshin/apply", ctx -> {
+                String body = ctx.body();
+                JSONObject object = JSONFactory.JSON.parseObject(body);
+                if (!sendRequest(object)) {
+                    throw new BadRequestResponse();
+                }
             });
 
             int port = Integer.parseInt(props.getProperty("port", "8080"));
