@@ -9,6 +9,12 @@ import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.rendering.template.JavalinFreemarker;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.hc.client5.http.auth.AuthScope;
 import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
 import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
@@ -87,7 +93,34 @@ public final class WebApp {
         return hash;
     }
 
-    private static boolean sendRequest(JSONObject object) {
+    private static void sendEmail(Properties arshinProps, String text) throws MessagingException {
+        String protocol = arshinProps.getProperty("send.protocol", "smtps");
+        String host = arshinProps.getProperty("send.host", "smtp.yandex.ru");
+        String port = arshinProps.getProperty("send.port", "465");
+        String starttls = arshinProps.getProperty("send.starttls", "false");
+        String from = arshinProps.getProperty("send.from", "fgisgost@yandex.ru");
+        String to = arshinProps.getProperty("send.to", "info@poverka911.ru");
+        String login = arshinProps.getProperty("send.login");
+        String password = arshinProps.getProperty("send.password");
+
+        Properties props = new Properties();
+        props.setProperty("mail.transport.protocol", protocol);
+        props.setProperty("mail.transport.protocol.rfc822", protocol);
+        props.setProperty("mail." + protocol + ".host", host);
+        props.setProperty("mail." + protocol + ".port", port);
+        props.setProperty("mail." + protocol + ".starttls.enable", starttls);
+        props.setProperty("mail." + protocol + ".auth", String.valueOf(login != null));
+        Session session = Session.getInstance(props);
+
+        MimeMessage message = new MimeMessage(session);
+        message.setFrom(from);
+        message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        message.setSubject("Заявка"); // todo
+        message.setText(text, "UTF-8");
+        Transport.send(message, login, password);
+    }
+
+    private static boolean sendRequest(Properties arshinProps, JSONObject object) {
         String fio = object.opt("fio", String.class);
         String phone = object.opt("phone", String.class);
         Long ts = object.opt("ts", Long.class);
@@ -98,6 +131,11 @@ public final class WebApp {
         if (hash(str) != hash.intValue())
             return false;
         LOGGER.info("APPLICATION: '{}', {}", fio, phone);
+        try {
+            sendEmail(arshinProps, String.format("Заявка от %s: %s", fio, phone));
+        } catch (MessagingException ex) {
+            LOGGER.error("Cannot send request", ex);
+        }
         return true;
     }
 
@@ -170,7 +208,7 @@ public final class WebApp {
             app.post("/arshin/apply", ctx -> {
                 String body = ctx.body();
                 JSONObject object = JSONFactory.JSON.parseObject(body);
-                if (!sendRequest(object)) {
+                if (!sendRequest(props, object)) {
                     throw new BadRequestResponse();
                 }
             });
