@@ -115,7 +115,7 @@ public final class WebApp {
         MimeMessage message = new MimeMessage(session);
         message.setFrom(from);
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-        message.setSubject("Заявка"); // todo
+        message.setSubject("ЦСМ: заказ звонка/услуги");
         message.setText(text, "UTF-8");
         Transport.send(message, login, password);
     }
