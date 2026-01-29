@@ -70,6 +70,8 @@ tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
                     reject("Alpha version")
                 } else if (candidate.version.contains("-b")) {
                     reject("Beta version")
+                } else if (candidate.version.contains("-M")) {
+                    reject("Milestone version")
                 }
             })
         }
