@@ -99,7 +99,7 @@ public final class WebApp {
         String port = arshinProps.getProperty("send.port", "465");
         String starttls = arshinProps.getProperty("send.starttls", "false");
         String from = arshinProps.getProperty("send.from", "fgisgost@yandex.ru");
-        String to = arshinProps.getProperty("send.to", "info@poverka911.ru");
+        String to = arshinProps.getProperty("send.to", "mail-csm@yandex.ru");
         String login = arshinProps.getProperty("send.login");
         String password = arshinProps.getProperty("send.password");
 
