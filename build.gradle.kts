@@ -42,7 +42,7 @@ dependencies {
     implementation("org.freemarker:freemarker:2.3.34")
     implementation("org.eclipse.angus:angus-mail:2.0.5")
     runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.26")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.28")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.29")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
