@@ -106,10 +106,8 @@
 
     const bannerLink = document.getElementById("bannerLink");
     bannerLink.addEventListener("click", (e) => {
-        if (e.shiftKey) {
-            e.preventDefault();
-            dialog.showModal();
-        }
+        e.preventDefault();
+        dialog.showModal();
     });
 
     const btnClose = document.getElementById("btn-close");
