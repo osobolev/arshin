@@ -71,7 +71,7 @@
 <dialog id="contactDialog" style="position: relative; padding-top: 1.5rem; border-radius: 0.5rem; width: 400px;">
     <button class="close-icon" id="btn-close">&times;</button>
     <div style="display: flex; flex-direction: column;">
-        <div id="input-error">Укажите номер телефона</div>
+        <div id="contact-feedback"></div>
         <label for="fio" id="fioLabel">ФИО:</label>
         <input type="text" id="fio" autofocus required>
 
@@ -153,18 +153,24 @@
         }
     }
 
+    function showFeedback(text, color) {
+        const feedback = document.getElementById("contact-feedback");
+        feedback.style.display = "block";
+        feedback.style.color = color;
+        feedback.textContent = text;
+    }
+
     const btnSend = document.getElementById("btn-send");
     btnSend.addEventListener("click", () => {
         if (!phoneInput.inputmask.isComplete()) {
-            const inputError = document.getElementById("input-error");
-            inputError.style.display = "block";
+            showFeedback("Укажите номер телефона", "red");
             phoneInput.style.borderColor = "red";
             phoneInput.focus();
             return;
         }
         const fio = fioInput.value;
         const phone = phoneInput.value;
-        sendRequest(fio, phone, () => dialog.close());
+        sendRequest(fio, phone, () => showFeedback("Благодарим Вас за заявку! Оператор позвонит Вам для уточнения деталей и подтверждения заявки.", "green"));
     });
 </script>
 

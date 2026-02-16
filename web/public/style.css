@@ -240,9 +240,9 @@ table th, table td {
     color: #444;
 }
 
-#input-error {
-    color: red;
+#contact-feedback {
     align-self: center;
+    padding-bottom: 10px;
     display: none;
 }
 
