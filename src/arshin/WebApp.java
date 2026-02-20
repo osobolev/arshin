@@ -132,7 +132,10 @@ public final class WebApp {
             return false;
         LOGGER.info("APPLICATION: '{}', {}", fio, phone);
         try {
-            sendEmail(arshinProps, String.format("Заявка от %s: %s", fio, phone));
+            sendEmail(arshinProps, String.format(
+                "%s оставил (-а) заявку в компанию ЦСМ\nКонтактный телефон: %s",
+                fio.trim().isEmpty() ? "Житель" : fio, phone
+            ));
         } catch (MessagingException ex) {
             LOGGER.error("Cannot send request", ex);
         }
