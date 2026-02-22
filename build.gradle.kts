@@ -62,6 +62,20 @@ tasks.jar {
     }
 }
 
+fun getMajor(version: String, majorDepth: Int): String {
+    var p = -1
+    for (i in 0 until majorDepth) {
+        p = version.indexOf('.', p + 1)
+        if (p < 0) return version
+    }
+    return if (p < 0) "" else version.substring(0, p)
+}
+
+fun getMajorDepth(mod: ModuleComponentIdentifier): Int {
+    if (mod.group == "io.javalin") return 1
+    return 0
+}
+
 tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class).configureEach {
     resolutionStrategy {
         componentSelection {
@@ -72,6 +86,11 @@ tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
                     reject("Beta version")
                 } else if (candidate.version.contains("-M")) {
                     reject("Milestone version")
+                } else {
+                    val majorDepth = getMajorDepth(candidate)
+                    if (getMajor(candidate.version, majorDepth) != getMajor(currentVersion, majorDepth)) {
+                        reject("Major update")
+                    }
                 }
             })
         }
