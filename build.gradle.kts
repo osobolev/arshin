@@ -72,7 +72,7 @@ fun getMajor(version: String, majorDepth: Int): String {
 }
 
 fun getMajorDepth(mod: ModuleComponentIdentifier): Int {
-    if (mod.group == "io.javalin") return 1
+    if (mod.group == "io.javalin") return 1 // Версия >= 7 требует Java 17
     return 0
 }
 
