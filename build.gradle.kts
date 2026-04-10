@@ -62,38 +62,17 @@ tasks.jar {
     }
 }
 
-fun getMajor(version: String, majorDepth: Int): String {
-    var p = -1
-    for (i in 0 until majorDepth) {
-        p = version.indexOf('.', p + 1)
-        if (p < 0) return version
-    }
-    return if (p < 0) "" else version.substring(0, p)
-}
-
-fun getMajorDepth(mod: ModuleComponentIdentifier): Int {
-    if (mod.group == "io.javalin") return 1 // Версия >= 7 требует Java 17
-    return 0
+fun requiredMajor(mod: ModuleComponentIdentifier): String {
+    if (mod.group == "io.javalin") return "6." // Версия >= 7 требует Java 17
+    return ""
 }
 
 tasks.withType(com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask::class).configureEach {
-    resolutionStrategy {
-        componentSelection {
-            all(Action<com.github.benmanes.gradle.versions.updates.resolutionstrategy.ComponentSelectionWithCurrent> {
-                if (candidate.version.contains("-a")) {
-                    reject("Alpha version")
-                } else if (candidate.version.contains("-b")) {
-                    reject("Beta version")
-                } else if (candidate.version.contains("-M")) {
-                    reject("Milestone version")
-                } else {
-                    val majorDepth = getMajorDepth(candidate)
-                    if (getMajor(candidate.version, majorDepth) != getMajor(currentVersion, majorDepth)) {
-                        reject("Major update")
-                    }
-                }
-            })
-        }
+    rejectVersionIf {
+        candidate.version.contains("-a") || 
+        candidate.version.contains("-b") ||
+        candidate.version.contains("-M") ||
+        !candidate.version.startsWith(requiredMajor(candidate))
     }
 }
 
