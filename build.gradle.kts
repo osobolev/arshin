@@ -1,6 +1,6 @@
 plugins {
     `java`
-    id("com.github.ben-manes.versions") version "0.53.0"
+    id("com.github.ben-manes.versions") version "0.54.0"
 }
 
 group = "io.github.osobolev"
@@ -34,7 +34,7 @@ tasks.withType(JavaCompile::class).configureEach {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.6")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.1")
     implementation("io.javalin:javalin:6.7.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }
