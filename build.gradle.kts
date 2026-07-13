@@ -34,7 +34,7 @@ tasks.withType(JavaCompile::class).configureEach {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.2")
     implementation("io.javalin:javalin:6.7.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }
@@ -42,7 +42,7 @@ dependencies {
     implementation("org.freemarker:freemarker:2.3.34")
     implementation("org.eclipse.angus:angus-mail:2.0.5")
     runtimeOnly("org.eclipse.jetty:jetty-servlet:11.0.26")
-    runtimeOnly("ch.qos.logback:logback-classic:1.5.33")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.38")
 }
 
 configurations["manualImplementation"].extendsFrom(configurations["implementation"])
