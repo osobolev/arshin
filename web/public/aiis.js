@@ -38,7 +38,7 @@ async function search() {
     numInput.disabled = true;
     btn.disabled = true;
     result.innerHTML = `<h2>Поиск по номеру в госреестре ${escapeHtml(num)}... <img src="/loading.gif" width="24px" alt="Пожалуйста подождите..."></h2>`;
-    let html = '<h1 class="error">Ошибка при обращении к ФГИС «Аршин»</h1>';
+    let html = '<h1 class="error">Сервер временно недоступен из-за высокой нагрузки.<br>Попробуйте повторить запрос через некоторое время.</h1>';
     try {
         const response = await fetch('/arshin/aiis/html?' + new URLSearchParams({num}));
         if (response.ok) {

@@ -83,7 +83,7 @@ async function search() {
     serialInput.disabled = true;
     btn.disabled = true;
     result.innerHTML = `<h2>Поиск по заводскому номеру ${escapeHtml(serial)}... <img src="/loading.gif" width="24px" alt="Пожалуйста подождите..."></h2>`;
-    let html = '<h1 class="error">Ошибка при обращении к ФГИС «Аршин»</h1>';
+    let html = '<h1 class="error">Сервер временно недоступен из-за высокой нагрузки.<br>Попробуйте повторить запрос через некоторое время.</h1>';
     try {
         console.log({serial, year, month});
         const response = await fetch('/arshin/counter/html?' + new URLSearchParams({serial, year, month}));
