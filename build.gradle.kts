@@ -11,7 +11,7 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
@@ -28,7 +28,7 @@ sourceSets {
 
 tasks.withType(JavaCompile::class).configureEach {
     options.encoding = "UTF-8"
-    options.release.set(11)
+    options.release = 11
 }
 
 dependencies {
