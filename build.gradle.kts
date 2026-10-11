@@ -3,7 +3,6 @@ plugins {
 }
 
 group = "io.github.osobolev"
-version = "1.0"
 
 repositories {
     mavenCentral()
@@ -33,7 +32,7 @@ tasks.withType(JavaCompile::class).configureEach {
 
 dependencies {
     implementation("io.github.osobolev:small-json:1.4")
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.4")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.6.5")
     implementation("io.javalin:javalin:6.7.0") {
         exclude(group = "org.eclipse.jetty.websocket", module = "websocket-jetty-server")
     }

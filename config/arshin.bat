@@ -1,1 +1,1 @@
-jre\bin\java.exe -jar arshin-1.0.jar
+jre\bin\java.exe -jar arshin.jar

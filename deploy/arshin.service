@@ -5,7 +5,7 @@ Description=Arshin server
 User=arshin
 Group=arshin
 WorkingDirectory=/home/arshin/arshin
-ExecStart=/usr/bin/java -jar arshin-1.0.jar
+ExecStart=/usr/bin/java -jar arshin.jar
 
 [Install]
 WantedBy=multi-user.target
